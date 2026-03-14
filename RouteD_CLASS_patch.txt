@@ -1,0 +1,24 @@
+# Route D Modification for CLASS v3.3.4
+# File: source/perturbations.c
+# Function: perturbations_derivs()
+# Gauge: Newtonian
+#
+# Replace the CDM density equation (line ~9226) with:
+#
+#   /* ROUTE D: CDM continuity + memory filter */
+#   {
+#     double H_proper = pvecback[pba->index_bg_H];
+#     double a_val = pvecback[pba->index_bg_a];
+#     double inv_tau_eff = pba->H0 + H_proper;
+#     dy[pv->index_pt_delta_cdm] = a_val * inv_tau_eff * (delta_b - y[pv->index_pt_delta_cdm])
+#                                  - (y[pv->index_pt_theta_cdm] + metric_continuity);
+#   }
+#
+# The CDM velocity equation (theta_cdm) remains UNCHANGED:
+#   dy[pv->index_pt_theta_cdm] = - a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler;
+#
+# Background parameters are standard Planck 2018 (omega_cdm = 0.1201075).
+# The memory variable occupies the delta_cdm slot.
+# The filter term a*(H0+H)*(delta_b - m) is the holographic memory kernel.
+# At CMB scales, k²Φ >> H²δ_b, so the filter is a ~10^-5 correction.
+# At late times and BAO scales, the filter produces 1-8% P(k) suppression.
